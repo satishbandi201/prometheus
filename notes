@@ -1,0 +1,13 @@
+Installation steps
+prometheus
+
+cd /opt/
+wget https://github.com/prometheus/prometheus/releases/download/v3.9.1/prometheus-3.9.1.linux-amd64.tar.gz
+tar -xvf prometheus-3.9.1.linux-amd64.tar.gz
+mv prometheus-3.9.1.linux-amd64 prometheus
+vim /etc/systemd/system/prometheus.service
+systemctl daemon-reload
+systemctl start prometheus
+
+node_exporter
+node-1 and node-2

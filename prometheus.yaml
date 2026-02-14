@@ -9,12 +9,11 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          # - alertmanager:9093
+           - localhost:9093
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-  # - "first_rules.yml"
-  # - "second_rules.yml"
+  - "alert_rules/*.yaml"
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -31,14 +30,28 @@ scrape_configs:
         labels:
           app: "prometheus"
       
-  - job_name: "node-1"
+  # - job_name: "node-1"
 
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
+  #   # metrics_path defaults to '/metrics'
+  #   # scheme defaults to 'http'.
 
-    static_configs:
-      - targets: ["54.237.214.184:9100"]
-       # The label name is added as a label `label_name=<label_value>` to any timeseries scraped from this config.
-        labels:
-          app: "node-1"
-          name: "node-1"
+  #   static_configs:
+  #     - targets: ["54.237.214.184:9100"]
+  #      # The label name is added as a label `label_name=<label_value>` to any timeseries scraped from this config.
+  #       labels:
+  #         app: "node-1"
+  #         name: "node-1"
+  - job_name: 'ec2_instances'
+    ec2_sd_configs:
+      - region: us-east-1
+        port: 9100
+        filters:
+          - name: "tag:Monitoring"
+            values: ["true"]
+    relabel_configs:
+      # Rename the EC2 tag "Name" to the label "ec2_name"
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: name
+      # Rename the EC2 instance ID to the label "instance_id"
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance_id
